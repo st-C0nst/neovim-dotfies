@@ -4,5 +4,7 @@
 require("core.mappings")
 require("core.options")
 
+-- Load configs
+require("config.lazy") -- we must load our plugin manager first
+
 -- Load plugins
-require("plugins.lazy") -- we must load our plugin manager first
