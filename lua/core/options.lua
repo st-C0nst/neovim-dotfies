@@ -33,3 +33,5 @@ vim.opt.ignorecase = true
 -- More colors
 vim.opt.termguicolors = true
 
+-- Add newlines to end of file on save
+vim.opt.fixendofline = true
