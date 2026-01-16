@@ -35,6 +35,9 @@ require("lazy").setup({
       'nvim-treesitter/nvim-treesitter',
       lazy = false,
       build = ':TSUpdate',
+      config = function()
+        require('nvim-treesitter').install({ 'rust', 'python', 'lua', 'cpp' })
+      end,
     },
   },
 
@@ -47,4 +50,3 @@ require("lazy").setup({
   checker = { enabled = true },
 })
 
-require('nvim-treesitter').install({ 'rust', 'python', 'lua', 'cpp' })
