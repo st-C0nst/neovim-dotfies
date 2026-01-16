@@ -20,11 +20,37 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   spec = {
     -- import your plugins
-    { import = "plugins" },
+    {
+      "rebelot/kanagawa.nvim",
+      opts = {
+        theme = "wave",
+      },
+      config = function(_, opts)
+        require("kanagawa").setup(opts)      -- automatically uses opts table
+        vim.opt.background = "dark"
+        vim.cmd([[colorscheme kanagawa]])
+      end,
+    },
+    {
+      'nvim-treesitter/nvim-treesitter',
+      lazy = false,
+      build = ':TSUpdate',
+      config = function()
+        require('nvim-treesitter').setup {
+          -- Directory to install parsers and queries to (prepended to `runtimepath` to have priority)
+          install_dir = vim.fn.stdpath('data') .. '/site'
+        }
+        require'nvim-treesitter'.install { 'rust', 'python', 'lua', 'c++' }
+      end,
+    },
   },
+
+
+
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { "habamax" } },
+  install = { colorscheme = { "kanagawa" } },
   -- automatically check for plugin updates
   checker = { enabled = true },
 })
+

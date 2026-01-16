@@ -32,3 +32,4 @@ vim.opt.ignorecase = true
 
 -- More colors
 vim.opt.termguicolors = true
+
