@@ -35,13 +35,17 @@ require("lazy").setup({
       'nvim-treesitter/nvim-treesitter',
       lazy = false,
       build = ':TSUpdate',
-      config = function()
-        require('nvim-treesitter').setup {
-          -- Directory to install parsers and queries to (prepended to `runtimepath` to have priority)
-          install_dir = vim.fn.stdpath('data') .. '/site'
-        }
-        require'nvim-treesitter'.install { 'rust', 'python', 'lua', 'c++' }
-      end,
+      opts = {
+      ensure_installed = { "c", "lua", "python", "javascript", "html", "css" }, -- languages to install
+      highlight = {
+        enable = true,      -- false will disable the whole extension
+        additional_vim_regex_highlighting = false,
+      },
+      indent = {
+        enable = true,      -- optional: automatic indentation
+      },
+      auto_install = true
+      }
     },
   },
 
