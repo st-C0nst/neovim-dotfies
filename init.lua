@@ -8,3 +8,6 @@ require("core.options")
 require("config.lazy") -- we must load our plugin manager first
 
 -- Load plugins
+
+-- Load lsp
+vim.lsp.enable("pyright")
