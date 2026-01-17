@@ -1,6 +1,7 @@
+-- NOTE there is a plugin called nvim-treesitter modules which partially reintroduces modules
 return {
   {
-    'nvim-treesitter/nvim-treesitter', -- I have not set up function and scope motions
+    'nvim-treesitter/nvim-treesitter',
     lazy = false,
     build = ':TSUpdate',
     config = function()
@@ -29,7 +30,7 @@ return {
       -- put your config here
       -- 
       -- configuration
-      require("nvim-treesitter-textobjects").setup {
+      require("nvim-treesitter-textobjects").setup({
         select = {
           -- Automatically jump forward to textobj, similar to targets.vim
           lookahead = true,
@@ -56,7 +57,25 @@ return {
           -- and should return true of false
           include_surrounding_whitespace = false,
         },
-      }
+      })
+      local select = require("nvim-treesitter-textobjects.select").select_textobject
+      vim.keymap.set({"x","o"}, "af", function()
+        select("@function.outer", "textobjects")
+      end)
+
+      vim.keymap.set({ "x", "o" }, "if", function()
+        select("@function.inner", "textobjects")
+      end)
+      vim.keymap.set({ "x", "o" }, "ac", function()
+        select("@class.outer", "textobjects")
+      end)
+      vim.keymap.set({ "x", "o" }, "ic", function()
+        select("@class.inner", "textobjects")
+      end)
+      -- You can also use captures from other query groups like `locals.scm`
+      vim.keymap.set({ "x", "o" }, "as", function()
+        select("@local.scope", "locals")
+      end)
 
     end,
   }
