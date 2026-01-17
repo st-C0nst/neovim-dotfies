@@ -25,12 +25,7 @@ return {
       -- vim.g.no_rust_maps = true
       -- vim.g.no_go_maps = true
     end,
-
-    config = function()
-      -- put your config here
-      -- 
-      -- configuration
-      require("nvim-treesitter-textobjects").setup({
+    opts = {
         select = {
           -- Automatically jump forward to textobj, similar to targets.vim
           lookahead = true,
@@ -57,8 +52,13 @@ return {
           -- and should return true of false
           include_surrounding_whitespace = false,
         },
-      })
+    },
+
+    config = function(_,opts)
+      require('nvim-treesitter-textobjects').setup(opts)
+      -- configuration
       local select = require("nvim-treesitter-textobjects.select").select_textobject
+
       vim.keymap.set({"x","o"}, "af", function()
         select("@function.outer", "textobjects")
       end)
