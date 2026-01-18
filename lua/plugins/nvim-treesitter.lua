@@ -57,24 +57,24 @@ return {
     config = function(_,opts)
       require('nvim-treesitter-textobjects').setup(opts)
       -- configuration
-      local select = require("nvim-treesitter-textobjects.select").select_textobject
+      local ts_select = require("nvim-treesitter-textobjects.select").select_textobject
 
       vim.keymap.set({"x","o"}, "af", function()
-        select("@function.outer", "textobjects")
+	      ts_select("@function.outer", "textobjects")
       end)
 
       vim.keymap.set({ "x", "o" }, "if", function()
-        select("@function.inner", "textobjects")
+	      ts_select("@function.inner", "textobjects")
       end)
       vim.keymap.set({ "x", "o" }, "ac", function()
-        select("@class.outer", "textobjects")
+	      ts_select("@class.outer", "textobjects")
       end)
       vim.keymap.set({ "x", "o" }, "ic", function()
-        select("@class.inner", "textobjects")
+	      ts_select("@class.inner", "textobjects")
       end)
       -- You can also use captures from other query groups like `locals.scm`
       vim.keymap.set({ "x", "o" }, "as", function()
-        select("@local.scope", "locals")
+	      ts_select("@local.scope", "locals")
       end)
 
     end,
