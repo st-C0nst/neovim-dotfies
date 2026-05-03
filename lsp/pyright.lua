@@ -4,6 +4,74 @@
 ---
 --- `pyright`, a static type checker and language server for python
 
+-- local function set_python_path(command)
+--   local path = command.args
+--   local clients = vim.lsp.get_clients {
+--     bufnr = vim.api.nvim_get_current_buf(),
+--     name = 'pyright',
+--   }
+--   for _, client in ipairs(clients) do
+--     if client.settings then
+--       client.settings.python =
+--         vim.tbl_deep_extend('force', client.settings.python --[[@as table]], { pythonPath = path })
+--     else
+--       client.config.settings = vim.tbl_deep_extend('force', client.config.settings, { python = { pythonPath = path } })
+--     end
+--     client:notify('workspace/didChangeConfiguration', { settings = nil })
+--   end
+-- end
+--
+-- local function find_venv(root)
+--   local candidates = {
+--     root .. "/.venv/bin/python",
+--     root .. "/venv/bin/python",
+--     root .. "/.virtualenv/bin/python",
+--   }
+--   for _, path in ipairs(candidates) do
+--     if vim.fn.executable(path) == 1 then
+--       return path
+--     end
+--   end
+--   return nil
+-- end
+
+-- define or override the configuration
+-- return {
+--   cmd = { "pyright-langserver", "--stdio" }, -- tell pyright to use standard communication
+--   root_markers = { { 'pyproject.toml', '.venv' }, '.git' }, -- detect project root
+--   filetypes = { 'python' }, -- start lsp upon opening a python file
+--   settings = {
+--     python = {
+--       analysis = {
+--         typeCheckingMode = "strict",
+--         autoSearchPaths = true,
+--         useLibraryCodeForTypes = true,
+--         diagnosticMode = 'openFilesOnly',
+--       },
+--     },
+--   },
+--   -- on_attach = function(client, bufnr)
+--   --
+--   --   local root = client.config.root_dir
+--   --   local venv_path = find_venv(root)
+--   --   if venv_path then
+--   --     local python_path = venv_path
+--   --     -- set pythonPath for this client
+--   --     if client.settings then
+--   --       client.settings.python = vim.tbl_deep_extend("force", client.settings.python or {}, { pythonPath = python_path })
+--   --     else
+--   --       client.config.settings = vim.tbl_deep_extend("force", client.config.settings or {}, { python = { pythonPath = python_path } })
+--   --     end
+--   --     client:notify("workspace/didChangeConfiguration", { settings = nil })
+--   --   end
+--   --
+--   -- end
+-- }
+--
+--
+
+
+-- this is straight from the nvim-lspconfig repo, should be correct
 local function set_python_path(command)
   local path = command.args
   local clients = vim.lsp.get_clients {
@@ -21,29 +89,22 @@ local function set_python_path(command)
   end
 end
 
-local function find_venv(root)
-  local candidates = {
-    root .. "/.venv/bin/python",
-    root .. "/venv/bin/python",
-    root .. "/.virtualenv/bin/python",
-  }
-  for _, path in ipairs(candidates) do
-    if vim.fn.executable(path) == 1 then
-      return path
-    end
-  end
-  return nil
-end
-
--- define or override the configuration
+---@type vim.lsp.Config
 return {
-  cmd = { "pyright-langserver", "--stdio" }, -- tell pyright to use standard communication
-  root_markers = { { 'pyproject.toml', '.venv' }, '.git' }, -- detect project root
-  filetypes = { 'python' }, -- start lsp upon opening a python file
+  cmd = { 'pyright-langserver', '--stdio' },
+  filetypes = { 'python' },
+  root_markers = {
+    'pyrightconfig.json',
+    'pyproject.toml',
+    'setup.py',
+    'setup.cfg',
+    'requirements.txt',
+    'Pipfile',
+    '.git',
+  },
   settings = {
     python = {
       analysis = {
-        typeCheckingMode = "strict",
         autoSearchPaths = true,
         useLibraryCodeForTypes = true,
         diagnosticMode = 'openFilesOnly',
@@ -51,20 +112,24 @@ return {
     },
   },
   on_attach = function(client, bufnr)
+    vim.api.nvim_buf_create_user_command(bufnr, 'LspPyrightOrganizeImports', function()
+      local params = {
+        command = 'pyright.organizeimports',
+        arguments = { vim.uri_from_bufnr(bufnr) },
+      }
 
-    local root = client.config.root_dir
-    local venv_path = find_venv(root)
-    if venv_path then
-      local python_path = venv_path
-      -- set pythonPath for this client
-      if client.settings then
-        client.settings.python = vim.tbl_deep_extend("force", client.settings.python or {}, { pythonPath = python_path })
-      else
-        client.config.settings = vim.tbl_deep_extend("force", client.config.settings or {}, { python = { pythonPath = python_path } })
-      end
-      client:notify("workspace/didChangeConfiguration", { settings = nil })
-    end
-
-  end
+      -- Using client.request() directly because "pyright.organizeimports" is private
+      -- (not advertised via capabilities), which client:exec_cmd() refuses to call.
+      -- https://github.com/neovim/neovim/blob/c333d64663d3b6e0dd9aa440e433d346af4a3d81/runtime/lua/vim/lsp/client.lua#L1024-L1030
+      ---@diagnostic disable-next-line: param-type-mismatch
+      client.request('workspace/executeCommand', params, nil, bufnr)
+    end, {
+      desc = 'Organize Imports',
+    })
+    vim.api.nvim_buf_create_user_command(bufnr, 'LspPyrightSetPythonPath', set_python_path, {
+      desc = 'Reconfigure pyright with the provided python path',
+      nargs = 1,
+      complete = 'file',
+    })
+  end,
 }
-
