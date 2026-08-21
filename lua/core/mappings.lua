@@ -30,9 +30,10 @@ vim.keymap.set("n", "Y", "y$")
 -- Document colors are enabled for highlighting color references in a document.
 -- To opt out call vim.lsp.document_color.enable(false, args.buf) on LspAttach.
 
--- TODO we should prob have something to fix the v paste yank issue where pasting can override your yank reg
-
 vim.keymap.set('n', '<C-h>', '<C-w>h', {desc = 'Move focus left'})
 vim.keymap.set('n', '<C-l>', '<C-w>l', {desc = 'Move focus right'})
 vim.keymap.set('n', '<C-j>', '<C-w>j', {desc = 'Move focus down'})
 vim.keymap.set('n', '<C-k>', '<C-w>k', {desc = 'Move focus up'})
+
+-- Don't overwrite the yank register when deleting/changing text
+vim.keymap.set("x", "p", '"_dP')
