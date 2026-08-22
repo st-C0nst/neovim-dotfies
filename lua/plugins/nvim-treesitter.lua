@@ -5,7 +5,7 @@ return {
     lazy = false,
     build = ':TSUpdate',
     config = function()
-      local ensure_installed = { 'rust', 'python', 'lua', 'cpp' }
+      local ensure_installed = { 'rust', 'python', 'lua', 'c','cpp' }
       require('nvim-treesitter').install(ensure_installed)
     end,
   },

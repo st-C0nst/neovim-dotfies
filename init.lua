@@ -12,5 +12,6 @@ require("config.lazy") -- we must load our plugin manager first
 -- Load lsp
 vim.lsp.enable({
   "pyright",
-  "lua_ls"
+  "lua_ls",
+  "clangd"
 })
