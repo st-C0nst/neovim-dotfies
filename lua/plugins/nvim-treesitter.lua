@@ -5,13 +5,13 @@ return {
     lazy = false,
     build = ':TSUpdate',
     config = function()
-      local ensure_installed = { 'rust', 'python', 'lua', 'c','cpp' }
+      local ensure_installed = { 'rust', 'python', 'lua', 'c', 'cpp', 'cmake' }
       require('nvim-treesitter').install(ensure_installed)
     end,
   },
   {
     "nvim-treesitter/nvim-treesitter-textobjects",
-    dependencies = {'nvim-treesitter/nvim-treesitter'},
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
 
     branch = "main",
     init = function()
@@ -26,57 +26,56 @@ return {
       -- vim.g.no_go_maps = true
     end,
     opts = {
-        select = {
-          -- Automatically jump forward to textobj, similar to targets.vim
-          lookahead = true,
-          -- You can choose the select mode (default is charwise 'v')
-          --
-          -- Can also be a function which gets passed a table with the keys
-          -- * query_string: eg '@function.inner'
-          -- * method: eg 'v' or 'o'
-          -- and should return the mode ('v', 'V', or '<c-v>') or a table
-          -- mapping query_strings to modes.
-          selection_modes = {
-            ['@parameter.outer'] = 'v', -- charwise
-            ['@function.outer'] = 'V', -- linewise
-            -- ['@class.outer'] = '<c-v>', -- blockwise
-          },
-          -- If you set this to `true` (default is `false`) then any textobject is
-          -- extended to include preceding or succeeding whitespace. Succeeding
-          -- whitespace has priority in order to act similarly to eg the built-in
-          -- `ap`.
-          --
-          -- Can also be a function which gets passed a table with the keys
-          -- * query_string: eg '@function.inner'
-          -- * selection_mode: eg 'v'
-          -- and should return true of false
-          include_surrounding_whitespace = false,
+      select = {
+        -- Automatically jump forward to textobj, similar to targets.vim
+        lookahead = true,
+        -- You can choose the select mode (default is charwise 'v')
+        --
+        -- Can also be a function which gets passed a table with the keys
+        -- * query_string: eg '@function.inner'
+        -- * method: eg 'v' or 'o'
+        -- and should return the mode ('v', 'V', or '<c-v>') or a table
+        -- mapping query_strings to modes.
+        selection_modes = {
+          ['@parameter.outer'] = 'v', -- charwise
+          ['@function.outer'] = 'V',  -- linewise
+          -- ['@class.outer'] = '<c-v>', -- blockwise
         },
+        -- If you set this to `true` (default is `false`) then any textobject is
+        -- extended to include preceding or succeeding whitespace. Succeeding
+        -- whitespace has priority in order to act similarly to eg the built-in
+        -- `ap`.
+        --
+        -- Can also be a function which gets passed a table with the keys
+        -- * query_string: eg '@function.inner'
+        -- * selection_mode: eg 'v'
+        -- and should return true of false
+        include_surrounding_whitespace = false,
+      },
     },
 
-    config = function(_,opts)
+    config = function(_, opts)
       require('nvim-treesitter-textobjects').setup(opts)
       -- configuration
       local ts_select = require("nvim-treesitter-textobjects.select").select_textobject
 
-      vim.keymap.set({"x","o"}, "af", function()
-	      ts_select("@function.outer", "textobjects")
+      vim.keymap.set({ "x", "o" }, "af", function()
+        ts_select("@function.outer", "textobjects")
       end)
 
       vim.keymap.set({ "x", "o" }, "if", function()
-	      ts_select("@function.inner", "textobjects")
+        ts_select("@function.inner", "textobjects")
       end)
       vim.keymap.set({ "x", "o" }, "ac", function()
-	      ts_select("@class.outer", "textobjects")
+        ts_select("@class.outer", "textobjects")
       end)
       vim.keymap.set({ "x", "o" }, "ic", function()
-	      ts_select("@class.inner", "textobjects")
+        ts_select("@class.inner", "textobjects")
       end)
       -- You can also use captures from other query groups like `locals.scm`
       vim.keymap.set({ "x", "o" }, "as", function()
-	      ts_select("@local.scope", "locals")
+        ts_select("@local.scope", "locals")
       end)
-
     end,
   }
 

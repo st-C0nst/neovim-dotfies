@@ -14,5 +14,6 @@ require("core.theme").load()
 vim.lsp.enable({
   "pyright",
   "lua_ls",
-  "clangd"
+  "clangd",
+  "cmake"
 })
