@@ -10,3 +10,4 @@ ideally neorg can be opened by just pressing notes which should change the nvim 
 still need better marking
 preview for search, lower buffer, should be builtin
 cmake lsp
+simplify telescope search?

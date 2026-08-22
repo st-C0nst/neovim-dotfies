@@ -7,7 +7,8 @@ require("core.options")
 -- Load configs
 require("config.lazy") -- we must load our plugin manager first
 
--- Load plugins
+-- Load theme after theme plugins loaded
+require("core.theme").load()
 
 -- Load lsp
 vim.lsp.enable({
