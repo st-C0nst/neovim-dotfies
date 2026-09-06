@@ -12,4 +12,4 @@ preview for search, lower buffer, should be builtin
 cmake lsp
 simplify telescope search?
 
-bind other 4 harpoon binds to nums
+why is harpoon prev next not working?
